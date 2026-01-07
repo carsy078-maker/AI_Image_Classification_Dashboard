@@ -1,1 +1,1 @@
-# AI_Image_Classification_Dashboard
+# AI_Image_Classification
