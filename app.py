@@ -83,7 +83,7 @@ with st.sidebar:
     st.caption("Google ViT Model")
 
 # 3. 메인 화면
-st.title("🖼️ AI 이미지 분류")
+st.title("🖼️ AI 이미지 분류 앱")
 
 target_images = []
 col1, col2 = st.columns([5.5, 4.5], gap="large")
