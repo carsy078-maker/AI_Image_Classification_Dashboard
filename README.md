@@ -29,7 +29,7 @@ https://aiimageclassificationdashboardgit-fkeetpgidfdfgnmirrgmvc.streamlit.app/
 
 프론트엔드와 백엔드가 분리되어 있으며, REST API를 통해 데이터를 주고받습니다.
 
-![image.png](attachment:74c02e89-8840-4145-be79-45c66ecb67ca:image.png)
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/a45ef5e9-e9a0-4e02-b717-0de47379884c" />
 
 - **Frontend (Streamlit):** 사용자의 입력을 받고, 영화 목록 및 리뷰 데이터를 시각화합니다.
 - **Backend (FastAPI):** 클라이언트의 요청을 처리하고, 데이터(영화, 리뷰)를 관리하며, AI 모델을 호출하여 감성 분석을 수행합니다.
@@ -39,7 +39,7 @@ https://aiimageclassificationdashboardgit-fkeetpgidfdfgnmirrgmvc.streamlit.app/
 
 본 프로젝트는 In-memory 방식을 사용하여 데이터를 관리하며, 데이터 구조는 다음과 같습니다.
 
-![image.png](attachment:3df66eca-2c5b-4959-9bea-6ec121281b1e:image.png)
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/d910b60c-3ee9-4aec-8b07-6fcc5629dcc2" />
 
 **[데이터 명세서]**
 
@@ -73,21 +73,21 @@ https://aiimageclassificationdashboardgit-fkeetpgidfdfgnmirrgmvc.streamlit.app/
 
 FastAPI가 자동으로 생성한 Swagger UI 명세서입니다. API의 엔드포인트와 요청/응답 스키마를 확인할 수 있습니다.
 
-![image.png](attachment:852e1a64-ceaa-4132-8a5f-2c081a64d6fb:image.png)
+<img width="1440" height="849" alt="image" src="https://github.com/user-attachments/assets/c184862c-068d-4603-953d-b98a185e72ee" />
 
-![image.png](attachment:25e6b10e-c446-452b-939b-e1a11a1709e2:image.png)
+<img width="1442" height="1218" alt="image" src="https://github.com/user-attachments/assets/af928269-e031-47bc-88e6-fd7cf19f4562" />
 
-![image.png](attachment:9b949446-238d-4b08-b9d2-bb41bfdaee99:image.png)
+<img width="1433" height="1267" alt="image" src="https://github.com/user-attachments/assets/18523378-d263-4fe8-8800-8f8c8ae18359" />
 
-![image.png](attachment:5e6b8684-2c9e-475d-ab0a-3c6bd557b6d9:image.png)
+<img width="1436" height="1126" alt="image" src="https://github.com/user-attachments/assets/408ad688-e685-404c-870c-a7c961231253" />
 
-![image.png](attachment:d9e842ca-1d4a-4bc7-9f01-5bcb5c4addb2:image.png)
+<img width="1433" height="1017" alt="image" src="https://github.com/user-attachments/assets/40d52163-5c36-43b2-b3d4-f4ab822fb467" />
 
-![image.png](attachment:5d0d88e3-5a5f-4dec-b5c9-58ca0c91eb0e:image.png)
+<img width="1429" height="1016" alt="image" src="https://github.com/user-attachments/assets/993e47cd-19bf-418a-9970-74e1a3bad7b6" />
 
-![image.png](attachment:a0b3e7fb-ab65-4ecc-a87f-26b894721822:image.png)
+<img width="1432" height="1012" alt="image" src="https://github.com/user-attachments/assets/44611a94-22c2-45c0-b526-0f36defc837b" />
 
-![image.png](attachment:1950fe5d-bf8a-4402-b81d-3cb02a5a049c:image.png)
+<img width="1434" height="354" alt="image" src="https://github.com/user-attachments/assets/dbc9a57f-b369-4597-b126-42fc7e19d536" />
 
 **[주요 API 설명]**
 
@@ -107,23 +107,23 @@ FastAPI가 자동으로 생성한 Swagger UI 명세서입니다. API의 엔드�
 
 영화 포스터와 정보가 카드 형태로 시각화되어 표시됩니다.
 
-![스크린샷 2026-01-15 114459.png](attachment:62b4307e-ac2e-4ee9-894a-745861c22029:스크린샷_2026-01-15_114459.png)
+<img width="2558" height="1269" alt="image" src="https://github.com/user-attachments/assets/a4bd126a-472e-4ba3-b09a-2d0944b00da6" />
 
 ### 4.2. 영화 추가 기능
 
 사이드바를 통해 새로운 영화 정보, 리뷰를 입력하고 등록하는 화면입니다.
 
-![스크린샷 2026-01-15 114546.png](attachment:3a126097-086e-46e8-806a-e7fd87d3554c:스크린샷_2026-01-15_114546.png)
+<img width="252" height="564" alt="image" src="https://github.com/user-attachments/assets/eb9a4723-1513-4aa5-9c53-052fab5cd292" />
 
-![스크린샷 2026-01-15 114605.png](attachment:e49a2b47-8b13-466e-8512-102d92de3310:스크린샷_2026-01-15_114605.png)
+<img width="254" height="478" alt="image" src="https://github.com/user-attachments/assets/0d99d451-c594-4483-8f82-f7038f9123a5" />
 
 ### 4.3. AI 분석 결과
 
 사용자가 사이드바에서 리뷰를 입력하면, AI 모델이 실시간으로 추론하여 **긍정(초록색)/부정(빨간색)으로 시각화된 결과**를 즉시 보여줍니다.
 
-![스크린샷 2026-01-15 114648.png](attachment:d00528b0-6d7a-418c-95a3-cf81067af39e:스크린샷_2026-01-15_114648.png)
+<img width="1305" height="702" alt="image" src="https://github.com/user-attachments/assets/cabc9bc9-7285-4585-94f9-03ff6cbf6a87" />
 
-![스크린샷 2026-01-15 114707.png](attachment:931f81de-b0fd-4773-b625-6fb209e0a0a5:스크린샷_2026-01-15_114707.png)
+<img width="1306" height="1074" alt="image" src="https://github.com/user-attachments/assets/aebf1bde-5399-4829-83c0-5ed57453d41a" />
 
 ---
 
