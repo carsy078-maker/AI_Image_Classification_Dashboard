@@ -6,8 +6,6 @@ https://aiimageclassificationdashboardgit-fkeetpgidfdfgnmirrgmvc.streamlit.app/
 
 사전 학습된 **ViT(Vision Transformer)** 모델을 활용하여, 사용자가 업로드한 사물 이미지를 실시간으로 다중 클래스로 분류하는 End-to-End 웹 대시보드입니다.
 
-🔗 **Live Demo:** [Streamlit 앱 링크를 여기에 입력하세요](https://aiimageclassificationdashboardgit-fkeetpgidfdfgnmirrgmvc.streamlit.app/)
-
 ---
 
 ## 주요 기능 (Key Features)
