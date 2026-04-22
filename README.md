@@ -2,7 +2,7 @@
 https://aiimageclassificationdashboardgit-fkeetpgidfdfgnmirrgmvc.streamlit.app/
 <img width="2559" height="1267" alt="image" src="https://github.com/user-attachments/assets/88788407-76d0-47ae-87a8-c7e58c740768" />
 
-# 🖼️ AI Image Classification Dashboard
+# AI Image Classification Dashboard
 
 사전 학습된 **ViT(Vision Transformer)** 모델을 활용하여, 사용자가 업로드한 사물 이미지를 실시간으로 다중 클래스로 분류하는 End-to-End 웹 대시보드입니다.
 
