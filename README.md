@@ -1,5 +1,8 @@
 # ViT Image Classification Dashboard
 
+**라이브 데모 → https://vit.lucenta.duckdns.org**
+(OCI Ampere A1 / Ubuntu 24.04 aarch64 / Docker. 4종 백엔드 모두 사용 가능)
+
 `google/vit-base-patch16-224` 로 이미지를 분류하는 Streamlit 대시보드.
 
 단순 분류 데모가 아니라, **같은 모델을 런타임(PyTorch / ONNX Runtime)과
@@ -184,7 +187,17 @@ export VD_HUB_ONNX_REPO="<사용자명>/vit-base-onnx-int8"
 ### Docker
 
 ```bash
-docker compose up -d --build     # 앱 + Caddy(80 포트 리버스 프록시)
+docker compose up -d --build                  # 앱만 (127.0.0.1:8501 바인딩)
+docker compose --profile standalone up -d     # 앞단 Caddy 까지 함께
+```
+
+기본 구성은 앱을 루프백에만 연다. 호스트에 이미 웹 서버가 있는 서버에서 컨테이너가
+80 을 뺏지 않도록 한 것으로, 그런 환경에서는 기존 프록시에 한 블록만 더하면 된다.
+
+```caddy
+vit.example.com {
+    reverse_proxy 127.0.0.1:8501
+}
 ```
 
 [Dockerfile](Dockerfile) 은 다단계 빌드이고 최종 타깃이 둘이다. builder 단계에서만
