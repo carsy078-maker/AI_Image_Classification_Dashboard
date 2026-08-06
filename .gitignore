@@ -1,0 +1,21 @@
+# 내보낸 모델 가중치 (scripts/export_models.py 로 재생성)
+models/
+
+# 벤치마크용 샘플 이미지 (scripts/download_samples.py 로 재생성)
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# 환경 설정
+.env
+.streamlit/secrets.toml
+
+# OS
+.DS_Store

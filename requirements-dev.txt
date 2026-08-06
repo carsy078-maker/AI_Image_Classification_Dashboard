@@ -1,0 +1,18 @@
+# 개발·모델 내보내기·벤치마크용. 배포에는 requirements.txt 를 쓴다.
+#
+# CPU 전용 torch 휠을 받는다. 기본 인덱스의 torch 는 CUDA 런타임을 포함해
+# 수 GB 에 달하는데, 이 프로젝트는 CPU 추론만 다루므로 받을 이유가 없다.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+-r requirements.txt
+
+torch==2.13.0
+torchvision==0.28.0
+onnx==1.22.0
+requests==2.34.2
+pytest==9.1.1
+ruff==0.15.1
+
+# README 스크린샷 자동 캡처 (scripts/capture_screenshots.py).
+# 브라우저는 별도로 받아야 한다: playwright install chromium
+playwright==1.62.0

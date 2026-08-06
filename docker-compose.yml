@@ -1,0 +1,52 @@
+# 앱 + 리버스 프록시 한 벌.
+#
+#   docker compose up -d --build      최초 기동 (모델 내보내기까지 포함, 10분 내외)
+#   docker compose logs -f app        로그
+#   docker compose down               정지
+#
+# 앱 컨테이너는 8501 을 외부로 열지 않는다. Caddy 만 80/443 을 잡고,
+# 컨테이너 네트워크 안에서 app:8501 로 넘긴다.
+
+services:
+  app:
+    build:
+      context: .
+      # 4종 전부 싣는 타깃. 메모리가 빠듯한 환경이면 runtime-onnx 로 바꾼다.
+      target: runtime-full
+    image: vision-dashboard:full
+    restart: unless-stopped
+    expose:
+      - "8501"
+    environment:
+      # PyTorch 와 ONNX Runtime 에 같은 값이 들어가야 런타임 비교가 성립한다.
+      # 인스턴스의 OCPU 수에 맞출 것.
+      VD_CPU_THREADS: "4"
+    # 4종을 동시에 올려도 3GB 남짓이지만, 폭주 시 호스트까지 끌고 가지 않도록 막아둔다.
+    mem_limit: 8g
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

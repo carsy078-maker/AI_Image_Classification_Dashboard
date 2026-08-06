@@ -1,0 +1,40 @@
+[project]
+name = "vision-dashboard"
+version = "1.0.0"
+description = "ViT 이미지 분류 대시보드 - 런타임/정밀도별 백엔드를 전환하며 정확도와 지연시간을 비교한다"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit>=1.40",
+    "torch>=2.2",
+    "transformers>=4.40",
+    "onnx>=1.16",
+    "onnxruntime>=1.17",
+    "numpy>=1.26",
+    "pillow>=10.0",
+    "pandas>=2.0",
+    "altair>=5.0",
+    "huggingface-hub>=0.23",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -1,0 +1,56 @@
+[theme]
+# 웜 모노크롬 에디토리얼. 색은 의미가 있을 때만 쓰고, 나머지는 타이포와 여백으로 위계를 만든다.
+base = "light"
+
+backgroundColor = "#FBFBFA"          # 웜 본 화이트. 순백은 화면에서 차갑고 눈이 피로하다
+secondaryBackgroundColor = "#F4F3F0"
+textColor = "#1F1E1C"                # 순수 검정(#000)은 쓰지 않는다
+primaryColor = "#1F1E1C"             # CTA 는 유채색이 아니라 잉크 색
+linkColor = "#1F6C9F"
+linkUnderline = false
+
+borderColor = "#E5E3DE"
+dataframeBorderColor = "#E5E3DE"
+dataframeHeaderBackgroundColor = "#F4F3F0"
+showWidgetBorder = true
+showSidebarBorder = true
+
+baseRadius = "8px"
+buttonRadius = "6px"
+
+# 한글이 포함된 UI 라 한글 자소가 정돈된 Pretendard 를 먼저 찾고, 없으면 OS 기본으로 떨어진다.
+font = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', system-ui, sans-serif"
+headingFont = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', system-ui, sans-serif"
+codeFont = "ui-monospace, SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, monospace"
+
+baseFontSize = 15
+headingFontSizes = ["1.75rem", "1.25rem", "1.0rem", "0.9rem", "0.85rem", "0.8rem"]
+headingFontWeights = [640, 600, 600, 600, 600, 600]
+
+# 지연시간·정확도 수치가 이 앱의 본문이다. 크고 굵게.
+metricValueFontSize = "2rem"
+metricValueFontWeight = 640
+
+# 백엔드 4종 구분용. 런타임(PyTorch/ONNX)은 색상 계열로, 정밀도(FP32/INT8)는 명도로 갈린다.
+chartCategoricalColors = ["#2F3437", "#A8A093", "#4A6FA5", "#6E8B6F"]
+chartSequentialColors = [
+  "#F2F1EE", "#E2E0DA", "#CFCCC4", "#BAB6AC", "#A29D92",
+  "#8A8478", "#6F695E", "#544F46", "#3A362F", "#1F1E1C",
+]
+
+[[theme.fontFaces]]
+family = "Pretendard Variable"
+url = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2"
+weight = "45 920"
+style = "normal"
+
+[theme.sidebar]
+backgroundColor = "#F4F3F0"
+secondaryBackgroundColor = "#FBFBFA"
+borderColor = "#E5E3DE"
+
+[server]
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
