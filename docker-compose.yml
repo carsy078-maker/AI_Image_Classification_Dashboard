@@ -1,11 +1,21 @@
-# 앱 + 리버스 프록시 한 벌.
+# 앱 컨테이너 (+ 필요할 때만 리버스 프록시).
 #
-#   docker compose up -d --build      최초 기동 (모델 내보내기까지 포함, 10분 내외)
-#   docker compose logs -f app        로그
-#   docker compose down               정지
+#   docker compose up -d --build                    앱만 기동 (기본)
+#   docker compose --profile standalone up -d       Caddy 까지 함께 기동
+#   docker compose logs -f app                      로그
+#   docker compose down                             정지
 #
-# 앱 컨테이너는 8501 을 외부로 열지 않는다. Caddy 만 80/443 을 잡고,
-# 컨테이너 네트워크 안에서 app:8501 로 넘긴다.
+# 기본 구성은 앱을 127.0.0.1:8501 에만 바인딩한다. 호스트에 이미 웹 서버가
+# 있는 서버(80 포트를 다른 서비스가 쓰는 경우)에서는 그쪽에 리버스 프록시
+# 한 줄만 추가하면 되고, 컨테이너가 80 을 뺏지 않는다.
+#
+#   # 호스트 Caddyfile 예시
+#   vit.example.com {
+#       reverse_proxy localhost:8501
+#   }
+#
+# 호스트에 웹 서버가 없는 깨끗한 환경이라면 standalone 프로파일로 Caddy 까지
+# 한 번에 띄운다.
 
 services:
   app:
@@ -15,8 +25,9 @@ services:
       target: runtime-full
     image: vision-dashboard:full
     restart: unless-stopped
-    expose:
-      - "8501"
+    ports:
+      # 루프백에만 연다. 외부 노출은 앞단 리버스 프록시가 맡는다.
+      - "127.0.0.1:8501:8501"
     environment:
       # PyTorch 와 ONNX Runtime 에 같은 값이 들어가야 런타임 비교가 성립한다.
       # 인스턴스의 OCPU 수에 맞출 것.
@@ -34,7 +45,9 @@ services:
       start_period: 60s
       retries: 3
 
+  # 호스트에 웹 서버가 없을 때만 쓴다. --profile standalone 으로 켠다.
   caddy:
+    profiles: ["standalone"]
     image: caddy:2-alpine
     restart: unless-stopped
     depends_on:
