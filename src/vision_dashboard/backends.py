@@ -58,24 +58,61 @@ def _size_mb(path: Path) -> float:
     return round(path.stat().st_size / (1024 * 1024), 2)
 
 
+def _probe_quantization(engine: str) -> bool:
+    """이 엔진으로 실제 양자화가 되는지 작은 레이어로 시험해 본다."""
+    import torch
+
+    try:
+        torch.backends.quantized.engine = engine
+        tiny = torch.nn.Sequential(torch.nn.Linear(4, 2))
+        quantized = torch.ao.quantization.quantize_dynamic(
+            tiny, {torch.nn.Linear}, dtype=torch.qint8
+        )
+        quantized(torch.zeros(1, 4))
+        return True
+    except Exception:
+        return False
+
+
+@lru_cache(maxsize=1)
 def setup_quantization_engine() -> str:
     """동적 양자화에 쓸 백엔드 엔진을 고른다.
 
-    torch 의 기본 양자화 엔진은 'none' 이라, 그대로 두고 quantize_dynamic 을
-    부르면 Apple Silicon 에서 `NoQEngine` 런타임 에러가 난다. 지원 목록에서
-    직접 골라줘야 한다 (ARM=qnnpack, x86=fbgemm).
+    `torch.backends.quantized.supported_engines` 를 믿으면 안 된다. Linux
+    aarch64 에서도 ['qnnpack', 'onednn', 'x86', 'fbgemm'] 을 전부 보고하지만
+    x86 과 fbgemm 은 호출하는 순간 `RuntimeError: unknown architecure` 로
+    죽는다. 게다가 그 환경의 기본 엔진이 하필 x86 이라, 설정된 값을 그대로
+    쓰면 실패한다 (macOS 는 반대로 기본값이 'none' 이라 이 함정이 안 보인다).
+
+    그래서 목록을 믿지 않고 후보를 실제로 양자화해 보며 고른다. 시험용 레이어는
+    Linear(4, 2) 라 비용이 사실상 없고, 결과는 프로세스 수명 동안 캐시한다.
     """
+    import platform
+
     import torch
 
-    if torch.backends.quantized.engine != "none":
-        return torch.backends.quantized.engine
-
     supported = list(torch.backends.quantized.supported_engines)
-    for candidate in ("fbgemm", "qnnpack", "x86", "onednn"):
-        if candidate in supported:
-            torch.backends.quantized.engine = candidate
-            return candidate
-    raise RuntimeError(f"쓸 수 있는 양자화 엔진이 없다: {supported}")
+    current = torch.backends.quantized.engine
+
+    # 아키텍처에 맞는 것을 앞에 둔다. 현재 설정값은 신뢰하지 않고 검증 대상에만 넣는다.
+    if platform.machine().lower() in ("aarch64", "arm64"):
+        preferred = ("qnnpack", "onednn")
+    else:
+        preferred = ("fbgemm", "x86", "onednn", "qnnpack")
+
+    seen: set[str] = set()
+    candidates = [e for e in (*preferred, current, *supported) if e and e != "none"]
+
+    for engine in candidates:
+        if engine in seen or engine not in supported:
+            continue
+        seen.add(engine)
+        if _probe_quantization(engine):
+            return engine
+
+    raise RuntimeError(
+        f"이 환경에서 동작하는 양자화 엔진이 없다. 보고된 목록: {supported}"
+    )
 
 
 def torch_installed() -> bool:

@@ -111,5 +111,16 @@ def test_load_backend_rejects_unknown_key():
 
 
 def test_quantization_engine_is_resolvable():
-    """torch 기본값은 'none' 이라, 명시하지 않으면 양자화가 런타임 에러를 낸다."""
+    """torch 기본값을 그대로 두면 양자화가 런타임 에러를 낸다."""
     assert backends.setup_quantization_engine() in {"fbgemm", "qnnpack", "x86", "onednn"}
+
+
+def test_selected_engine_actually_quantizes():
+    """고른 엔진으로 실제 양자화가 되어야 한다.
+
+    supported_engines 목록은 신뢰할 수 없다. Linux aarch64 는 x86/fbgemm 까지
+    '지원' 한다고 보고하지만 호출하면 `unknown architecure` 로 죽는다.
+    목록만 보고 고르던 이전 구현이 그 환경에서 실패했다.
+    """
+    engine = backends.setup_quantization_engine()
+    assert backends._probe_quantization(engine)
