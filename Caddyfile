@@ -1,0 +1,21 @@
+# 도메인이 없으므로 IP + HTTP 로 받는다.
+#
+# 도메인을 붙이려면 아래 `:80` 을 도메인으로 바꾸기만 하면 된다.
+# Caddy 가 Let's Encrypt 인증서를 자동 발급하고 HTTP→HTTPS 리다이렉트까지 건다.
+#
+#   vit.example.com {
+#       reverse_proxy app:8501
+#   }
+
+:80 {
+	# Streamlit 은 WebSocket 으로 상태를 주고받는다. Caddy 의 reverse_proxy 는
+	# Upgrade 헤더를 그대로 넘기므로 별도 설정이 필요 없다.
+	reverse_proxy app:8501
+
+	encode gzip
+
+	log {
+		output stdout
+		format console
+	}
+}

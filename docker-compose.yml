@@ -1,0 +1,72 @@
+# 앱 컨테이너 (+ 필요할 때만 리버스 프록시).
+#
+#   docker compose up -d --build                    앱만 기동 (기본)
+#   docker compose --profile standalone up -d       Caddy 까지 함께 기동
+#   docker compose logs -f app                      로그
+#   docker compose down                             정지
+#
+# 기본 구성은 앱을 127.0.0.1:8501 에만 바인딩한다. 호스트에 이미 웹 서버가
+# 있는 서버(80 포트를 다른 서비스가 쓰는 경우)에서는 그쪽에 리버스 프록시
+# 한 줄만 추가하면 되고, 컨테이너가 80 을 뺏지 않는다.
+#
+#   # 호스트 Caddyfile 예시
+#   vit.example.com {
+#       reverse_proxy localhost:8501
+#   }
+#
+# 호스트에 웹 서버가 없는 깨끗한 환경이라면 standalone 프로파일로 Caddy 까지
+# 한 번에 띄운다.
+
+services:
+  app:
+    build:
+      context: .
+      # 4종 전부 싣는 타깃. 메모리가 빠듯한 환경이면 runtime-onnx 로 바꾼다.
+      target: runtime-full
+    image: vision-dashboard:full
+    restart: unless-stopped
+    ports:
+      # 루프백에만 연다. 외부 노출은 앞단 리버스 프록시가 맡는다.
+      - "127.0.0.1:8501:8501"
+    environment:
+      # PyTorch 와 ONNX Runtime 에 같은 값이 들어가야 런타임 비교가 성립한다.
+      # cpus 상한을 넘겨 잡으면 스레드가 서로를 밀어내므로 같은 값으로 맞춘다.
+      VD_CPU_THREADS: "3"
+    # 4종을 동시에 올려도 3GB 남짓이지만, 폭주 시 호스트까지 끌고 가지 않도록 막아둔다.
+    mem_limit: 8g
+    # 같은 서버에 다른 서비스가 있을 때 최소 1코어를 남긴다. 인증 없는 공개
+    # 데모라 동시 요청이 몰리면 추론이 CPU 를 전부 가져갈 수 있다.
+    cpus: 3.0
+    volumes:
+      # 벤치마크 결과는 이미지에 굽지 않고 마운트한다. 다시 측정했을 때
+      # git pull 과 재기동만으로 화면에 반영된다.
+      - ./results:/app/results:ro
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+  # 호스트에 웹 서버가 없을 때만 쓴다. --profile standalone 으로 켠다.
+  caddy:
+    profiles: ["standalone"]
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

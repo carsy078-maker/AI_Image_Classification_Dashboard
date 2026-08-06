@@ -1,0 +1,93 @@
+{
+  "model": "google/vit-base-patch16-224",
+  "num_eval_images": 200,
+  "batch_size": 8,
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Linux-6.17.0-1011-oracle-aarch64-with-glibc2.41",
+    "processor": "aarch64",
+    "cpu_threads": 4
+  },
+  "variants": {
+    "pytorch_fp32": {
+      "label": "PyTorch FP32",
+      "short": "PT FP32",
+      "runtime": "pytorch",
+      "precision": "fp32",
+      "file": "vit_fp32.pth",
+      "size_mb": 330.3,
+      "latency": {
+        "mean_ms": 272.86,
+        "p50_ms": 260.68,
+        "p95_ms": 409.66,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 88.0,
+        "top5": 99.0
+      },
+      "fp32_agreement_pct": 100.0,
+      "throughput_img_per_sec": 4.06
+    },
+    "pytorch_int8": {
+      "label": "PyTorch INT8 (dynamic)",
+      "short": "PT INT8",
+      "runtime": "pytorch",
+      "precision": "int8",
+      "file": "vit_int8_dynamic.pth",
+      "size_mb": 85.15,
+      "latency": {
+        "mean_ms": 467.04,
+        "p50_ms": 466.01,
+        "p95_ms": 476.01,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 87.5,
+        "top5": 99.0
+      },
+      "fp32_agreement_pct": 96.5,
+      "throughput_img_per_sec": 2.32
+    },
+    "onnx_fp32": {
+      "label": "ONNX FP32",
+      "short": "ONNX FP32",
+      "runtime": "onnx",
+      "precision": "fp32",
+      "file": "vit_fp32.onnx",
+      "size_mb": 330.42,
+      "latency": {
+        "mean_ms": 273.65,
+        "p50_ms": 264.13,
+        "p95_ms": 319.45,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 88.0,
+        "top5": 99.0
+      },
+      "fp32_agreement_pct": 100.0,
+      "throughput_img_per_sec": 3.56
+    },
+    "onnx_int8": {
+      "label": "ONNX INT8 (dynamic)",
+      "short": "ONNX INT8",
+      "runtime": "onnx",
+      "precision": "int8",
+      "file": "vit_int8_dynamic.onnx",
+      "size_mb": 83.7,
+      "latency": {
+        "mean_ms": 95.99,
+        "p50_ms": 95.2,
+        "p95_ms": 97.35,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 88.5,
+        "top5": 98.0
+      },
+      "fp32_agreement_pct": 96.5,
+      "throughput_img_per_sec": 10.39
+    }
+  }
+}

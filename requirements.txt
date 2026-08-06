@@ -1,6 +1,18 @@
-streamlit
-transformers
-torch
-pillow
-tensorflow
-tf-keras
+# 앱 실행에 필요한 최소 의존성 (배포용).
+#
+# torch 를 넣지 않는다. 배포 환경은 ONNX Runtime 만으로 추론하며, 전처리도
+# transformers 의 PIL 백엔드를 쓰므로 torch 가 필요 없다. torch 를 함께 싣던
+# 이전 구성 대비 설치 용량이 크게 줄고, Streamlit Community Cloud 의 메모리
+# 한계에서도 여유가 생긴다.
+#
+# 모델을 직접 내보내거나(scripts/export_models.py) 벤치마크를 돌리려면
+# requirements-dev.txt 를 쓸 것. 거기에 torch 가 들어있다.
+
+streamlit==1.61.1
+transformers==5.14.1
+onnxruntime==1.28.0
+numpy==2.5.1
+pillow==12.3.0
+pandas==3.0.5
+altair==6.2.2
+huggingface-hub==1.26.0

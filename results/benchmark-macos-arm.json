@@ -1,0 +1,93 @@
+{
+  "model": "google/vit-base-patch16-224",
+  "num_eval_images": 200,
+  "batch_size": 8,
+  "environment": {
+    "python": "3.12.13",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "processor": "arm",
+    "cpu_threads": 4
+  },
+  "variants": {
+    "pytorch_fp32": {
+      "label": "PyTorch FP32",
+      "short": "PT FP32",
+      "runtime": "pytorch",
+      "precision": "fp32",
+      "file": "vit_fp32.pth",
+      "size_mb": 330.3,
+      "latency": {
+        "mean_ms": 39.16,
+        "p50_ms": 38.85,
+        "p95_ms": 39.91,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 88.0,
+        "top5": 99.0
+      },
+      "fp32_agreement_pct": 100.0,
+      "throughput_img_per_sec": 37.01
+    },
+    "pytorch_int8": {
+      "label": "PyTorch INT8 (dynamic)",
+      "short": "PT INT8",
+      "runtime": "pytorch",
+      "precision": "int8",
+      "file": "vit_int8_dynamic.pth",
+      "size_mb": 85.15,
+      "latency": {
+        "mean_ms": 90.21,
+        "p50_ms": 89.63,
+        "p95_ms": 92.99,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 88.0,
+        "top5": 98.5
+      },
+      "fp32_agreement_pct": 96.0,
+      "throughput_img_per_sec": 11.38
+    },
+    "onnx_fp32": {
+      "label": "ONNX FP32",
+      "short": "ONNX FP32",
+      "runtime": "onnx",
+      "precision": "fp32",
+      "file": "vit_fp32.onnx",
+      "size_mb": 330.42,
+      "latency": {
+        "mean_ms": 35.56,
+        "p50_ms": 34.96,
+        "p95_ms": 39.91,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 88.0,
+        "top5": 99.0
+      },
+      "fp32_agreement_pct": 100.0,
+      "throughput_img_per_sec": 29.45
+    },
+    "onnx_int8": {
+      "label": "ONNX INT8 (dynamic)",
+      "short": "ONNX INT8",
+      "runtime": "onnx",
+      "precision": "int8",
+      "file": "vit_int8_dynamic.onnx",
+      "size_mb": 83.7,
+      "latency": {
+        "mean_ms": 33.24,
+        "p50_ms": 33.21,
+        "p95_ms": 33.66,
+        "runs": 30
+      },
+      "accuracy": {
+        "top1": 89.5,
+        "top5": 99.0
+      },
+      "fp32_agreement_pct": 97.0,
+      "throughput_img_per_sec": 29.72
+    }
+  }
+}
