@@ -43,44 +43,53 @@
 
 ## 핵심 결과
 
-Apple M5 (10코어), 4스레드 고정, ImageNet-1k 에서 균등 추출한 200장 기준.
+실제 배포 서버(OCI Ampere A1, Neoverse-N1 4 OCPU), 4스레드 고정,
+ImageNet-1k 에서 균등 추출한 200장 기준.
 
 | 변형 | 용량 | 용량 절감 | 지연 mean | 지연 p95 | 속도 | Top-1 | Top-5 | FP32 일치 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| PyTorch FP32 | 330.3 MB | 0.0% | 39.2 ms | 39.9 ms | 1.00x | 88.0% | 99.0% | 100.0% |
-| PyTorch INT8 (dynamic) | 85.2 MB | 74.2% | 90.2 ms | 93.0 ms | **0.43x** | 88.0% | 98.5% | 96.0% |
-| ONNX FP32 | 330.4 MB | -0.0% | 35.6 ms | 39.9 ms | 1.10x | 88.0% | 99.0% | 100.0% |
-| **ONNX INT8 (dynamic)** | **83.7 MB** | **74.7%** | **33.2 ms** | 33.7 ms | **1.18x** | 89.5% | 99.0% | 97.0% |
+| PyTorch FP32 | 330.3 MB | 0.0% | 272.9 ms | 409.7 ms | 1.00x | 88.0% | 99.0% | 100.0% |
+| PyTorch INT8 (dynamic) | 85.2 MB | 74.2% | 467.0 ms | 476.0 ms | **0.58x** | 87.5% | 99.0% | 96.5% |
+| ONNX FP32 | 330.4 MB | -0.0% | 273.6 ms | 319.4 ms | 1.00x | 88.0% | 99.0% | 100.0% |
+| **ONNX INT8 (dynamic)** | **83.7 MB** | **74.7%** | **96.0 ms** | 97.3 ms | **2.84x** | 88.5% | 98.0% | 96.5% |
 
 재현: `python scripts/run_benchmark.py --n 200 --runs 30 --threads 4`
-원본 데이터: [`results/benchmark.json`](results/benchmark.json)
+원본 데이터: [`results/benchmark.json`](results/benchmark.json) (배포 서버) ·
+[`results/benchmark-macos-arm.json`](results/benchmark-macos-arm.json) (개발 머신)
 
 ### 여기서 읽어야 할 것
 
 **1. 양자화는 항상 빠르지 않다 — 하드웨어가 결론을 뒤집는다.**
 
-PyTorch 동적 INT8 은 Apple Silicon 에서 FP32 보다 **2.3배 느렸다**. 용량은
-74% 줄었는데 속도는 오히려 손해다. ARM 의 양자화 백엔드는 `qnnpack` 인데,
-ViT 처럼 큰 Linear 가 연속되는 구조에서 양자화·역양자화 오버헤드가 M5 의
-FP32 경로(AMX/NEON)를 이기지 못한다.
+세 플랫폼에서 같은 코드로 측정한 지연시간 배율이다.
 
-같은 코드를 x86 Windows(`fbgemm`)에서 측정했을 때는 반대로 **1.65배 빨랐다**
-([vit-onnx-optimization](https://github.com/carsy078-maker/vit-onnx-optimization)).
-"INT8 양자화 = 가속" 이라는 통념이 플랫폼에 따라 그대로 뒤집히는 사례다.
+| 지연시간 배율 (각 환경의 FP32=1.00) | Windows x86<br>fbgemm | macOS ARM (M5)<br>qnnpack | Linux ARM (Neoverse-N1)<br>qnnpack |
+|---|---:|---:|---:|
+| PyTorch INT8 | 1.65x | **0.43x** | **0.58x** |
+| ONNX INT8 | 1.81x | 1.18x | **2.84x** |
 
-| 지연시간 배율 (FP32=1.00) | x86 / fbgemm | ARM / qnnpack |
-|---|---:|---:|
-| PyTorch INT8 | 1.65x | **0.43x** |
-| ONNX INT8 | 1.81x | 1.18x |
+PyTorch 동적 INT8 은 **ARM 두 곳 모두에서 FP32 보다 느렸다.** 용량은 74% 줄었는데
+속도는 손해다. ARM 의 양자화 백엔드인 `qnnpack` 은 ViT 처럼 큰 Linear 가 연속되는
+구조에서 양자화·역양자화 오버헤드를 FP32 경로로 상쇄하지 못한다. 반면 x86(`fbgemm`)
+에서는 1.65배 빨랐다 ([vit-onnx-optimization](https://github.com/carsy078-maker/vit-onnx-optimization)).
+"INT8 양자화 = 가속" 이라는 통념이 플랫폼에 따라 그대로 뒤집힌다.
 
-**2. ONNX Runtime 은 두 플랫폼 모두에서 안전한 선택이었다.**
+**2. 최적화 효과는 배포 환경에서 재야 한다.**
 
-ONNX INT8 은 어느 쪽에서도 기준선보다 느려지지 않으면서 용량을 74.7% 줄였고,
-FP32 와 Top-1 예측이 97% 일치했다. 그래서 이 프로젝트의 **배포 기본 백엔드**다.
+ONNX INT8 의 이득이 개발 머신(M5)에서는 1.18배였는데 **실제 배포 하드웨어에서는
+2.84배**였다. M5 는 FP32 경로가 워낙 빨라 INT8 로 얻을 여지가 적었던 반면,
+서버급 Neoverse-N1 에서는 격차가 크게 벌어진다. 개발 머신 수치만 보고
+"별 차이 없네" 라고 판단했다면 실제 서비스에서 **272.9ms → 96.0ms** 의 개선을
+놓쳤을 것이다.
 
-**3. 정확도 수치의 한계를 분명히 해둔다.**
+**3. ONNX Runtime 은 세 플랫폼 모두에서 안전한 선택이었다.**
 
-- 200장은 표본이 작다. Top-1 의 표준오차가 ±2%p 수준이라, 표의 88.0% 와 89.5%
+ONNX INT8 은 어디서도 기준선보다 느려지지 않으면서 용량을 74.7% 줄였고,
+FP32 와 Top-1 예측이 96.5% 일치했다. 그래서 이 프로젝트의 **배포 기본 백엔드**다.
+
+**4. 정확도 수치의 한계를 분명히 해둔다.**
+
+- 200장은 표본이 작다. Top-1 의 표준오차가 ±2%p 수준이라, 표의 88.0% 와 88.5%
   차이를 "양자화가 정확도를 올렸다"고 읽으면 안 된다. 노이즈 범위다.
 - 평가에 쓴 이미지는 ImageNet 공식 validation set 이 아니라 클래스당 1장짜리
   샘플 저장소다. ViT-Base 의 공식 Top-1(81.1%, val 50,000장)과 직접 비교할 수 없다.
