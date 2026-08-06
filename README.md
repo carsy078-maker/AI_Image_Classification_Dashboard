@@ -258,7 +258,7 @@ UI 는 Streamlit `AppTest` 로 검증한다. 그중 하나는 **Top-K 슬라이�
 
 ## 기술 스택
 
-Python 3.10+ · Streamlit · ONNX Runtime · PyTorch · Hugging Face Transformers ·
+Python 3.12+ · Streamlit · ONNX Runtime · PyTorch · Hugging Face Transformers ·
 Altair · pytest · GitHub Actions · Docker
 
 ---

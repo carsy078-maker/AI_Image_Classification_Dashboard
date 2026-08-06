@@ -2,7 +2,9 @@
 name = "vision-dashboard"
 version = "1.0.0"
 description = "ViT 이미지 분류 대시보드 - 런타임/정밀도별 백엔드를 전환하며 정확도와 지연시간을 비교한다"
-requires-python = ">=3.10"
+# 하한은 의존성이 정한다. numpy 2.5 가 >=3.12, pandas 3.0 과 onnxruntime 1.28
+# 이 >=3.11 을 요구하므로 실질 하한은 3.12 다.
+requires-python = ">=3.12"
 dependencies = [
     "streamlit>=1.40",
     "torch>=2.2",
@@ -34,7 +36,7 @@ filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

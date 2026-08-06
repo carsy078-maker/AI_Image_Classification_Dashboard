@@ -110,9 +110,7 @@ def setup_quantization_engine() -> str:
         if _probe_quantization(engine):
             return engine
 
-    raise RuntimeError(
-        f"이 환경에서 동작하는 양자화 엔진이 없다. 보고된 목록: {supported}"
-    )
+    raise RuntimeError(f"이 환경에서 동작하는 양자화 엔진이 없다. 보고된 목록: {supported}")
 
 
 def torch_installed() -> bool:
